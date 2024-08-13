@@ -13,3 +13,5 @@ USER_NOT_FOUND_ERR_MSG = "User not found"
 USER_DEACTIVATED_ERR_MSG = "Deactivated user"
 
 LOGIN_IS_INACTIVE = "Not active user"
+
+REQUIRED_FIELD_ERR_MSG = "This field is required"
