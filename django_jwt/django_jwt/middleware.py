@@ -1,22 +1,28 @@
-from channels.db import database_sync_to_async
-from channels.middleware import BaseMiddleware
+import logging
 from django.contrib.auth.models import AnonymousUser
 
 from .models import JWTToken
 
+logger = logging.getLogger(__name__)
 
-class TokenAuthMiddleware(BaseMiddleware):
+def get_user(token_key):
+    try:
+        token = JWTToken.objects.get(token=token_key)
+        return token.user
+    except JWTToken.DoesNotExist:
+        return AnonymousUser()
 
-    async def __call__(self, scope, receive, send):
-        token_key = scope["query_string"].decode().split("=")[-1]
-        scope["user"] = await self.get_user(token_key)
-        return await super().__call__(scope, receive, send)
+class TokenAuthMiddleware:
+    """
+    Custom middleware (insecure) that takes user IDs from the query string.
+    """
 
-    @staticmethod
-    @database_sync_to_async
-    def get_user(token_key):
-        try:
-            token = JWTToken.objects.get(token=token_key)
-            return token.user
-        except JWTToken.DoesNotExist:
-            return AnonymousUser()
+    def __init__(self, get_response):
+        # Store the ASGI application we were passed
+        self.get_response = get_response
+
+    def __call__(self, request):
+        token = request.headers['authorization'].split()[-1]
+        request.scope['user'] = get_user(token)
+        return self.get_response(request)
+

@@ -1,5 +1,5 @@
 import logging
-from datetime import datetime
+from datetime import datetime, timezone as dt_timezone
 from typing import Tuple
 
 import jwt
@@ -64,7 +64,6 @@ class JWTAuthentication(authentication.BaseAuthentication):
         Try to authenticate the given credentials. If authentication is
         successful, return the user and token. If not, throw an error.
         """
-
         try:
             JWTToken.objects.get(token=token, type=TokenType.ACCESS.value)
         except JWTToken.DoesNotExist:
@@ -75,7 +74,7 @@ class JWTAuthentication(authentication.BaseAuthentication):
 
         try:
             payload = jwt.decode(
-                token, settings.SECRET_KEY, algorithms=[settings.JWT_ALGORITHM]
+                token, settings.JWT_SECRET_KEY, algorithms=[settings.JWT_ALGORITHM]
             )
         except Exception as ex:  # NOQA
             logger.info(messages.FAILED_TO_DECODE_TOKEN_ERR_MSG.format(ex.args[0]))
@@ -102,6 +101,7 @@ class JWTAuthentication(authentication.BaseAuthentication):
     def _is_token_expired(payload) -> bool:
         if isinstance(payload["exp"], int):
             now = timezone.now()
-            expires_at = timezone.utc.localize(datetime.fromtimestamp(payload["exp"]))
+            expires_at = datetime.fromtimestamp(payload["exp"], tz=dt_timezone.utc)
+            # expires_at = timezone.utc.localize(datetime.fromtimestamp(payload["exp"]))
             return expires_at < now
         return False

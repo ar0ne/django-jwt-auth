@@ -51,9 +51,10 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'django_jwt.middleware.TokenAuthMiddleware',
 ]
 
-ROOT_URLCONF = 'django_jwt.urls'
+ROOT_URLCONF = 'config.urls'
 
 TEMPLATES = [
     {
@@ -71,7 +72,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'django_jwt.wsgi.application'
+WSGI_APPLICATION = 'config.wsgi.application'
 
 
 # Database
@@ -133,3 +134,5 @@ REST_FRAMEWORK = {
         "rest_framework.authentication.BasicAuthentication",
     )
 }
+
+ASGI_APPLICATION = 'config.asgi.application'

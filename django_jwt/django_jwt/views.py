@@ -1,12 +1,17 @@
 from django.conf import settings
 from rest_framework import exceptions, status
-from rest_framework.decorators import (api_view, authentication_classes,
+from rest_framework.decorators import (api_view, 
                                        permission_classes)
 from rest_framework.response import Response
-
+from rest_framework.permissions import IsAuthenticated
 from . import messages
 from .models import JWTToken, TokenType
 from .utils import create_token
+
+@api_view(["GET"])
+@permission_classes([IsAuthenticated])
+def test_me(request):
+    return Response(data={"message": "You successfully passed JWT authentication"})
 
 
 @api_view(["POST"])
@@ -20,7 +25,7 @@ def obtain_jwt_token(request):
 def build_token_response(user) -> Response:
     access_token, _ = create_token(
         user=user,
-        ttl=int(settings.JWT_AUTH_TOKEN_TTL),
+        ttl=int(settings.JWT_ACCESS_TOKEN_TTL),
         secret_key=settings.JWT_SECRET_KEY,
         token_type=TokenType.ACCESS.value,
         algorithm=settings.JWT_ALGORITHM,
@@ -42,3 +47,5 @@ def build_token_response(user) -> Response:
         },
         status=status.HTTP_200_OK,
     )
+
+
