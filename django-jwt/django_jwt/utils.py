@@ -32,7 +32,6 @@ def create_token(
         algorithm=algorithm,
     )
 
-
     JWTToken.objects.create(
         user=user, token=jwt_token, expires_at=expires_at, type=token_type
     )

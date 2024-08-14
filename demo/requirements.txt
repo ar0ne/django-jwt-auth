@@ -1,5 +1,4 @@
 Django==5.1
 djangorestframework==3.15.2
 daphne==4.1.2
-pyjwt==2.9.0
-channels[daphne]==4.1.0
+#django-jwt==0.1

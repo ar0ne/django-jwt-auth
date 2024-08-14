@@ -21,5 +21,5 @@ from django_jwt.urls import urlpatterns as auth_urls
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path("", include(auth_urls)),
+    path("jwt/", include(auth_urls)),
 ]

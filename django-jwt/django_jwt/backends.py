@@ -16,10 +16,10 @@ logger = logging.getLogger(__name__)
 
 
 class JWTAuthentication(authentication.BaseAuthentication):
-    authentication_header_prefix = "Bearer"
+    AUTHENTICATION_HEADER_PREFIX = "BEARER"
 
-    def authenticate_header(self, request):
-        return self.authentication_header_prefix
+    def authenticate_header(self, request) -> str:
+        return self.AUTHENTICATION_HEADER_PREFIX
 
     def authenticate(self, request) -> Tuple["UserModel", str] | None:
         """
@@ -44,13 +44,13 @@ class JWTAuthentication(authentication.BaseAuthentication):
             return None
 
         if len(auth_header) != 2:
-            logger.debug(messages.INVALID_AUTH_HEADER_ERR_MSG.format(auth_header))
+            logger.debug(messages.INVALID_AUTH_HEADER_ERR_MSG)
             raise exceptions.AuthenticationFailed
 
         prefix: str = auth_header[0].decode("utf-8")
         token: str = auth_header[1].decode("utf-8")
 
-        if prefix.lower() != self.authentication_header_prefix.lower():
+        if prefix.lower() != self.AUTHENTICATION_HEADER_PREFIX.lower():
             # The auth header prefix is not what we expected. Proceed to next auth backend
             logger.debug(
                 "Auth header is not of 'Bearer' type - proceed to next auth backend"
@@ -77,7 +77,7 @@ class JWTAuthentication(authentication.BaseAuthentication):
                 token, settings.JWT_SECRET_KEY, algorithms=[settings.JWT_ALGORITHM]
             )
         except Exception as ex:  # NOQA
-            logger.info(messages.FAILED_TO_DECODE_TOKEN_ERR_MSG.format(ex.args[0]))
+            logger.info(messages.FAILED_TO_DECODE_TOKEN_ERR_MSG)
             raise exceptions.AuthenticationFailed
 
         if self._is_token_expired(payload):
@@ -102,6 +102,6 @@ class JWTAuthentication(authentication.BaseAuthentication):
         if isinstance(payload["exp"], int):
             now = timezone.now()
             expires_at = datetime.fromtimestamp(payload["exp"], tz=dt_timezone.utc)
-            # expires_at = timezone.utc.localize(datetime.fromtimestamp(payload["exp"]))
             return expires_at < now
         return False
+
