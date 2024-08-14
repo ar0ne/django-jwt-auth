@@ -19,7 +19,7 @@ INSTALLED_APPS = [
 
     path("jwt/, include("django_jwt.urls")),
 
-3. Run `python manage.py migrate` to create models:
+3. Run ``python manage.py migrate`` to create models.
 
 4. Start the development server and visit admin page.
 

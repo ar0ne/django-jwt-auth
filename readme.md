@@ -1,6 +1,6 @@
 # About 
 
-This is Django app could add JWT support to your application.
+This Django app could add [JWT](https://jwt.io) support to your application.
 
 To install this package: you could include release in your `requirements.txt` (see example in `demo`), or you could clone this repository and use sources from `django_jwt` package in your app.
 
